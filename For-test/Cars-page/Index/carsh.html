@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>معرض السيارات الفاخرة</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #1a1a1a;
+            --secondary-color: #ffffff;
+            --accent-color: #ff4d4d;
+            --text-color: #ffffff;
+            --bg-color: #000000;
+            --card-bg: rgba(255, 255, 255, 0.1);
+        }
+
+        .light-theme {
+            --primary-color: #ffffff;
+            --secondary-color: #1a1a1a;
+            --text-color: #000000;
+            --bg-color: #f5f5f5;
+            --card-bg: rgba(0, 0, 0, 0.05);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+        }
+
+        .background-wrapper {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .background-car {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.2;
+        }
+
+        nav {
+            background: rgba(0, 0, 0, 0.8);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: var(--accent-color);
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            padding: 0.5rem;
+        }
+
+        .mobile-menu {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 2rem;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .car-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .car-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transform: translateY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .car-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .car-image-container {
+            position: relative;
+            height: 200px;
+            overflow: hidden;
+        }
+
+        .car-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .car-card:hover .car-image {
+            transform: scale(1.1);
+        }
+
+        .car-details {
+            padding: 1.5rem;
+        }
+
+        .car-price {
+            color: var(--accent-color);
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 0.5rem 0;
+        }
+
+        .car-specs {
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--accent-color);
+            color: var(--text-color);
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: scale(1.05);
+        }
+
+        .contact-form {
+            max-width: 600px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 5px;
+            background: rgba(255,255,255,0.05);
+            color: var(--text-color);
+        }
+
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-content {
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 15px;
+            margin-top: 2rem;
+        }
+
+        .modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.9);
+    z-index: 1000;
+    animation: fadeIn 0.3s;
+    overflow-y: auto; 
+    padding: 20px; 
+    box-sizing: border-box;
+}
+
+        .modal-content {
+            position: relative;
+            width: 90%;
+            max-width: 1000px;
+            margin: 50px auto;
+            background: var(--bg-color);
+            padding: 2rem;
+            border-radius: 15px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .car-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .car-gallery img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .car-gallery img:hover {
+            transform: scale(1.05);
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 60px;
+                right: 0;
+                background: rgba(0, 0, 0, 0.9);
+                width: 100%;
+                padding: 1rem;
+            }
+
+            .nav-links.active {
+                display: flex;
+            }
+
+            .mobile-menu {
+                display: block;
+            }
+
+            .car-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-wrapper">
+          <img src="https://wallpapersmug.com/download/1920x1080/3c84e1/racers-night-chase-4k.jpg" alt="خلفية" class="background-car">
+      
+    </div>
+
+    <nav>
+        <button class="mobile-menu" onclick="toggleMobileMenu()">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-links">
+            <a href="#" onclick="showPage('cars')">السيارات</a>
+            <a href="#" onclick="showPage('about')">عن المعرض</a>
+            <a href="#" onclick="showPage('contact')">اتصل بنا</a>
+        </div>
+        <button class="theme-toggle" onclick="toggleTheme()">
+            <i class="fas fa-moon"></i>
+        </button>
+    </nav>
+
+    <main>
+        <div id="cars" class="page">
+            <h1>سياراتنا الفاخرة</h1>
+            <div class="car-grid"></div>
+        </div>
+
+        <div id="about" class="page">
+            <div class="about-section">
+                <h1>عن معرضنا</h1>
+                <div class="about-content">
+                    <p>نحن معرض متخصص في السيارات الرياضية الفاخرة منذ أكثر من 20 عاماً. نفتخر بتقديم أفضل السيارات الرياضية من أشهر العلامات التجارية العالمية.</p>
+                    <p>نلتزم بتوفير تجربة شراء استثنائية لعملائنا مع خدمة ما بعد البيع المتميزة.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="contact" class="page">
+            <div class="contact-form">
+                <h1>اتصل بنا</h1>
+               <form action="mailto:albaroudiabdelilah92@gmail.com" method="POST" enctype="text/plain">
+    <div class="form-group">
+        <label>الاسم</label>
+        <input type="text" name="name" class="form-control" required>
+    </div>
+    
+    <div class="form-group">
+        <label>رقم الهاتف</label>
+        <input type="tel" name="phone" class="form-control" required>
+    </div>
+    <div class="form-group">
+        <label>الرسالة</label>
+        <textarea name="message" class="form-control" rows="5" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">إرسال</button>
+</form>
+
+            </div>
+        </div>
+    </main>
+
+    <div class="modal" id="carModal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <script>
+        const cars = [
+            {
+                name: "بورش 911 GT3",
+                price: "1,500,000 درهم",
+                year: "2024",
+                images: [
+                    "https://blogger.googleusercontent.com/img/a/AVvXsEgpj6KXxw1qjQ1ER_gEm-qkZZtp3TpnYQucU2lypZOJ3G-3KKKCAT0ZlfLG4CQuZRM_a7uh1CNrzu8yXlYdNcuamX0Xf4-WyBdn17DFyuYuObW7ZQ4mD2VC0HuyPbMXHo0-36SGsmyJ-70efC8ukUgVzue-ud3yQoHAXLxya_dSV1DOjvnH6d_pYq0owQ",
+                    "https://blogger.googleusercontent.com/img/a/AVvXsEjWy4QwI8IP5AwvX565exFhQsvp69AhjhLK1K-XtavnSHmg4uFDR3Oy_rake6H359tVrWwnUuld6Nx8LiYJHMZXHDaNRC_L1UknEOVyG29ZJ_q_tu8_AyOeePUSC6wEfYI1VVGqNnQJHqr_GW9lG2i4eOtzIlWrlYbxH7GM7c60sH3V8V3gr4T077biag",
+                    "https://blogger.googleusercontent.com/img/a/AVvXsEhsGHOOXHmylCy0UVGDz50uQYsH0-p0qr5c8bkP6BmSg3dfirQx5L2FlIRtbMCxdujrBhjVoEd5Hke5rBS05BwGx5EwBAo38CdXkbkoDO0k8nHO7TqJ-sbKB9ZZs2j1QNHytrZfaLN9w2yTLmQspimigbm03-Yr4ZFoKL8yZo-rGJfy01sKfCN1dtLOYg"
+                ],
+                specs: "محرك سداسي الأسطوانات سعة 4.0 لتر، 502 حصان، ناقل حركة PDK ثنائي القابض، تسارع 0-100 كم/س في 3.4 ثانية"
+            },
+            {
+                name: "فيراري SF90 سترادالي",
+                price: "3,200,000 درهم",
+                year: "2024",
+                images: [
+                    "https://www.tech-mag.net/techmag/uploads/2020/07/dsc09285.jpg",
+                    "https://www.tech-mag.net/techmag/uploads/2020/07/dsc09285.jpg",
+                    "https://www.tech-mag.net/techmag/uploads/2020/07/dsc01738-1-1024x576.jpg"
+                ],
+                specs: "محرك V8 مع 3 محركات كهربائية، قوة إجمالية 986 حصان، تسارع 0-100 كم/س في 2.5 ثانية"
+            },
+            {
+                name: "لامبورغيني هوراكان STO",
+                price: "2,800,000 درهم",
+                year: "2024",
+                images: [
+                    "https://www.tuningblog.eu/wp-content/uploads/2020/11/2020-Lamborghini-Huracan-STO-Tuning-43.jpg",
+                    "https://www.tuningblog.eu/wp-content/uploads/2020/11/2020-Lamborghini-Huracan-STO-Tuning-43.jpg",
+                    "https://www.tuningblog.eu/wp-content/uploads/2020/11/2020-Lamborghini-Huracan-STO-Tuning-43.jpg"
+                ],
+                specs: "محرك V10 سعة 5.2 لتر، 631 حصان، تسارع 0-100 كم/س في 3.0 ثانية، هيكل من ألياف الكربون"
+            },
+            {
+                name: "مكلارين 765LT",
+                price: "2,600,000 درهم",
+                year: "2024",
+                images: [
+                    "https://hips.hearstapps.com/hmg-prod/images/2022-mclaren-765lt-spider-115-1652724748.jpg?crop=0.713xw:0.803xh;0.128xw,0.0649xh&resize=768:*",
+                    "https://hips.hearstapps.com/hmg-prod/images/2022-mclaren-765lt-spider-115-1652724748.jpg?crop=0.713xw:0.803xh;0.128xw,0.0649xh&resize=768:*",
+                    "https://hips.hearstapps.com/hmg-prod/images/2022-mclaren-765lt-spider-115-1652724748.jpg?crop=0.713xw:0.803xh;0.128xw,0.0649xh&resize=768:*"
+                ],
+                specs: "محرك V8 مزدوج التوربو سعة 4.0 لتر، 755 حصان، وزن 1,229 كجم، تسارع 0-100 كم/س في 2.8 ثانية"
+            },
+            {
+                name: "مرسيدس-AMG GT Black Series",
+                price: "2,400,000 درهم",
+                year: "2024",
+                images: [
+                    "https://www.turbo.fr/sites/default/files/styles/header_image/public/2022-05/IMG_1299.jpg.webp?itok=KdYAZCcg",
+                    "https://www.turbo.fr/sites/default/files/styles/header_image/public/2022-05/IMG_1299.jpg.webp?itok=KdYAZCcg",
+                    "https://www.turbo.fr/sites/default/files/styles/header_image/public/2022-05/IMG_1299.jpg.webp?itok=KdYAZCcg"
+                ],
+                specs: "محرك V8 مزدوج التوربو سعة 4.0 لتر، 720 حصان، تسارع 0-100 كم/س في 3.2 ثانية"
+            }
+        ];
+
+        // عرض السيارات
+        const carGrid = document.querySelector('.car-grid');
+        cars.forEach(car => {
+            const carCard = document.createElement('div');
+            carCard.className = 'car-card';
+            carCard.innerHTML = `
+                <div class="car-image-container">
+                    <img src="${car.images[0]}" alt="${car.name}" class="car-image" onclick="showCarDetails('${car.name}')">
+                </div>
+                <div class="car-details">
+                    <h3>${car.name}</h3>
+                    <div class="car-price">${car.price}</div>
+                    <div class="car-specs">${car.specs}</div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="contactWhatsApp('${car.name}', '${car.price}')">
+                            <i class="fab fa-whatsapp"></i> تواصل معنا
+                        </button>
+                        <button class="btn btn-secondary" onclick="showCarDetails('${car.name}')">
+                            <i class="fas fa-info-circle"></i> تفاصيل أكثر
+                        </button>
+                    </div>
+                </div>
+            `;
+            carGrid.appendChild(carCard);
+        });
+
+        // إظهار وإخفاء الصفحات
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(page => {
+                page.style.display = 'none';
+            });
+            document.getElementById(pageId).style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // تبديل الثيم
+        function toggleTheme() {
+            const body = document.body;
+            const themeToggle = document.querySelector('.theme-toggle i');
+            
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                themeToggle.className = 'fas fa-moon';
+            } else {
+                body.classList.add('light-theme');
+                themeToggle.className = 'fas fa-sun';
+            }
+        }
+
+        // عرض تفاصيل السيارة
+        function showCarDetails(carName) {
+            const car = cars.find(c => c.name === carName);
+            const modal = document.getElementById('carModal');
+            const modalContent = document.getElementById('modalContent');
+            
+            modalContent.innerHTML = `
+                <h2>${car.name}</h2>
+                <div class="car-gallery">
+                    ${car.images.map(img => `
+                        <img src="${img}" alt="${car.name}" onclick="expandImage(this.src)">
+                    `).join('')}
+                </div>
+                <div class="car-details">
+                    <div class="car-price">${car.price}</div>
+                    <h3>المواصفات:</h3>
+                    <p>${car.specs}</p>
+                    <div class="action-buttons" style="margin-top: 2rem;">
+                        <button class="btn btn-primary" onclick="contactWhatsApp('${car.name}', '${car.price}')">
+                            <i class="fab fa-whatsapp"></i> تواصل للشراء
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+
+        // توسيع الصورة
+        function expandImage(src) {
+            const modal = document.getElementById('carModal');
+            const modalContent = document.getElementById('modalContent');
+            const originalContent = modalContent.innerHTML;
+            
+            modalContent.innerHTML = `
+                <img src="${src}" alt="صورة موسعة" style="width: 100%; height: auto; border-radius: 10px;">
+                <button class="btn btn-secondary" onclick="restoreModalContent('${originalContent}')" style="margin-top: 1rem;">
+                    عودة للتفاصيل
+                </button>
+            `;
+        }
+
+        // استعادة محتوى النافذة المنبثقة
+        function restoreModalContent(content) {
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = content;
+        }
+
+        // إغلاق النافذة المنبثقة
+        function closeModal() {
+            document.getElementById('carModal').style.display = 'none';
+        }
+
+        // التواصل عبر واتساب
+        function contactWhatsApp(carName, price) {
+            const message = `مرحباً، أنا مهتم بالسيارة ${carName} بسعر ${price}`;
+            const whatsappNumber = "+212766981152";
+            window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+        }
+
+        // تقديم نموذج الاتصال
+        
+
+        // النافذة المنبثقة تغلق عند النقر خارجها
+        window.onclick = function(event) {
+            const modal = document.getElementById('carModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        }
+
+        // عرض صفحة السيارات عند تحميل الموقع
+        showPage('cars');
+
+        // تبديل القائمة في الأجهزة المحمولة
+        function toggleMobileMenu() {
+            const navLinks = document.querySelector('.nav-links');
+            navLinks.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
